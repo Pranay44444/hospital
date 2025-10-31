@@ -17,19 +17,19 @@ datasource db {
 
 model User {
   id                String    @id @default(uuid())
-  clerkUserId       String    @unique // Clerk's user ID
+  clerkUserId       String    @unique 
   email             String    @unique
   name              String?
   imageUrl          String?
-  role              UserRole  @default(UNASSIGNED) // UNASSIGNED, PATIENT, DOCTOR, ADMIN
+  role              UserRole  @default(UNASSIGNED) 
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
   
-  credits           Int       @default(2) // Accumulated credit balance
+  credits           Int       @default(2) 
   
   specialty         String?
-  experience        Int?      // Years of experience
-  credentialUrl     String?   // Document URL
+  experience        Int?     
+  credentialUrl     String?  
   description       String?   @db.Text
   verificationStatus VerificationStatus?  @default(PENDING)
   
@@ -77,8 +77,8 @@ model Appointment {
   patient           User     @relation("PatientAppointments", fields: [patientId], references: [id])
   doctorId          String
   doctor            User     @relation("DoctorAppointments", fields: [doctorId], references: [id])
-  startTime         DateTime // Start time of appointment
-  endTime           DateTime // End time of appointment
+  startTime         DateTime 
+  endTime           DateTime 
   status            AppointmentStatus @default(SCHEDULED)
   notes             String?  @db.Text
   patientDescription String? @db.Text
@@ -104,32 +104,32 @@ model CreditTransaction {
   id                String   @id @default(uuid())
   userId            String
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  amount            Int      // Positive for additions, negative for usage
+  amount            Int      
   type              TransactionType
-  packageId         String?  // Reference to which package was purchased
+  packageId         String?  
   createdAt         DateTime @default(now())
 }
 
 enum TransactionType {
-  CREDIT_PURCHASE     // Credits purchased through Clerk Billing
-  APPOINTMENT_DEDUCTION // Credit used for appointment
-  ADMIN_ADJUSTMENT      // Manual adjustment by admin
+  CREDIT_PURCHASE    
+  APPOINTMENT_DEDUCTION 
+  ADMIN_ADJUSTMENT      
 }
 
 model Payout {
   id              String        @id @default(uuid())
   doctorId        String
   doctor          User          @relation(fields: [doctorId], references: [id], onDelete: Cascade)
-  amount          Float         // Total payout amount in USD
-  credits         Int           // Number of credits being paid out
-  platformFee     Float         // Platform fee deducted (2 USD per credit)
-  netAmount       Float         // Amount doctor receives (8 USD per credit)
-  paypalEmail     String        // Doctor's PayPal email for payout
+  amount          Float         
+  credits         Int           
+  platformFee     Float         
+  netAmount       Float         
+  paypalEmail     String       
   status          PayoutStatus  @default(PROCESSING)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
-  processedAt     DateTime?     // When admin marked it as processed
-  processedBy     String?       // Admin who processed it
+  processedAt     DateTime?   
+  processedBy     String?      
 
   @@index([status, createdAt])
   @@index([doctorId, status])
