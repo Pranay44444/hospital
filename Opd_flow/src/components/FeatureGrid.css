@@ -46,7 +46,7 @@
 .feature-icon {
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: var(--primary-color);
   border-radius: var(--radius-lg);
   display: flex;
   align-items: center;

@@ -1,22 +1,20 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import AnnouncementBanner from './components/AnnouncementBanner';
-import CookieConsent from './components/CookieConsent';
-import { ToastProvider } from './components/Toast';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Request from './pages/Request';
-import Intake from './pages/Intake';
-import Admin from './pages/Admin';
-import Video from './pages/Video';
-import './pages/pages.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Footer from './components/Footer'
+import CookieConsent from './components/CookieConsent'
+import { ToastProvider } from './components/Toast'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Request from './pages/Request'
+import Intake from './pages/Intake'
+import Admin from './pages/Admin'
+import Video from './pages/Video'
+import './pages/pages.css'
 
 function App() {
   return (
     <Router>
       <ToastProvider>
-        <AnnouncementBanner />
         <Navbar />
         <main>
           <Routes>
@@ -32,7 +30,7 @@ function App() {
         <CookieConsent />
       </ToastProvider>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App
