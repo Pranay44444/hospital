@@ -1,16 +1,31 @@
-# React + Vite
+# OPDFlow
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Patient Portal
 
-Currently, two official plugins are available:
+### Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A patient-facing web app for appointment requests and symptom intake with an admin review panel and a 1:1 video call entry point.
 
-## React Compiler
+### Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React.js (Vite), HTML/CSS, JavaScript
+- **Backend**: Node.js (Express)
+- **Database**: MySQL with Prisma ORM
+- **Authentication**: OAuth 2.0 (Google), Passport, express-session, express-mysql-session
+- **Security & Middleware**: Helmet, CORS, express-rate-limit
+- **File Handling**: Multer (up to 2 files, 5MB each)
+- **Configuration**: dotenv
 
-## Expanding the ESLint configuration
+### Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+**Patient Portal:**
+- Google sign-in with role-based access control
+- Appointment request form with file uploads (up to 2 files, 5MB each)
+- Symptom intake form
+- 1:1 video call entry point from appointment detail view
+
+**Admin Portal (Healthcare Providers Only):**
+- Separate secure interface for doctors/admins (not publicly accessible)
+- List, filter, view, and update appointment status (Pending/Reviewed/Scheduled/Rejected)
+- Admin notes capability
+- Accessed only through direct secure route with authentication
