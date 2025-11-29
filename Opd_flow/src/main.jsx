@@ -6,7 +6,7 @@ import App from './App.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId="your_google_client_id_here">
+    <GoogleOAuthProvider clientId="638354772952-11eh05vamg38uvr5agks1oeb8npj76v9.apps.googleusercontent.com">
       <App />
     </GoogleOAuthProvider>
   </StrictMode>,

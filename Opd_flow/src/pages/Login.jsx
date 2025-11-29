@@ -6,22 +6,8 @@ import './Login.css';
 
 function Login() {
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: ''
-  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    setError(''); // Clear error when user types
-  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
@@ -37,56 +23,13 @@ function Login() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      if (isLogin) {
-        // Login
-        const response = await authAPI.login({
-          email: formData.email,
-          password: formData.password
-        });
-
-        if (response.success) {
-          // Redirect to home page after successful login
-          navigate('/');
-        }
-      } else {
-        // Register
-        const response = await authAPI.register({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password
-        });
-
-        if (response.success) {
-          // Redirect to home page after successful registration
-          navigate('/');
-        }
-      }
-    } catch (err) {
-      setError(err.message || 'An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const toggleMode = () => {
-    setIsLogin(!isLogin);
-    setError('');
-    setFormData({ name: '', email: '', password: '' });
-  };
-
   return (
     <div className="page login-page">
       <div className="container">
         <div className="login-container">
           <div className="login-header">
-            <h1>{isLogin ? 'Sign In' : 'Create Account'}</h1>
-            <p>{isLogin ? 'Welcome back to OPDFlow' : 'Join OPDFlow today'}</p>
+            <h1>Sign In with Google</h1>
+            <p>Welcome to OPDFlow - Secure authentication with Google</p>
           </div>
 
           <div className="google-login-wrapper">
@@ -96,86 +39,27 @@ function Login() {
               useOneTap
               theme="filled_blue"
               shape="pill"
-              text="continue_with"
+              text="signin_with"
               width="100%"
             />
           </div>
 
-          <div className="divider">
-            <span>OR</span>
-          </div>
-
-          <form onSubmit={handleSubmit} className="login-form">
-            {!isLogin && (
-              <div className="form-group">
-                <label htmlFor="name">Full Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-            )}
-
-            <div className="form-group">
-              <label htmlFor="email">Email Address</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                required
-              />
+          {error && (
+            <div className="error-message">
+              {error}
             </div>
+          )}
 
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                minLength={6}
-                required
-              />
-              {!isLogin && (
-                <small className="form-hint">Password must be at least 6 characters</small>
-              )}
+          {loading && (
+            <div className="loading-message">
+              Signing you in...
             </div>
-
-            {error && (
-              <div className="error-message">
-                {error}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              className="btn btn-primary btn-block"
-              disabled={loading}
-            >
-              {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
-            </button>
-          </form>
+          )}
 
           <div className="login-footer">
-            <p>
-              {isLogin ? "Don't have an account? " : 'Already have an account? '}
-              <button
-                type="button"
-                className="link-button"
-                onClick={toggleMode}
-              >
-                {isLogin ? 'Sign up' : 'Sign in'}
-              </button>
+            <p className="info-text">
+              By signing in, you agree to our Terms of Service and Privacy Policy.
+              Your data is secure and protected.
             </p>
           </div>
         </div>

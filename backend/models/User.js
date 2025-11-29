@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        minlength: [6, 'Password must be at least 6 characters']
+        default: ''
     },
     googleId: {
         type: String,
@@ -30,6 +30,17 @@ const userSchema = new mongoose.Schema({
 
 // Hash password before saving
 userSchema.pre('save', async function () {
+    // Skip password validation and hashing for Google OAuth users
+    if (this.googleId && !this.password) {
+        return; // Google user with no password is OK
+    }
+
+    // Validate password length for non-Google users
+    if (!this.googleId && (!this.password || this.password.length < 6)) {
+        throw new Error('Password must be at least 6 characters');
+    }
+
+    // Only hash if password is modified and not empty
     if (!this.isModified('password') || !this.password) {
         return;
     }

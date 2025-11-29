@@ -41,19 +41,21 @@
   opacity: 0.8;
 }
 
-.navbar-menu {
+.nav-center-menu {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
-  margin-left: auto;
-  margin-right: var(--spacing-lg);
+  justify-content: center;
+  gap: 2.5rem;
+  margin: 0 auto;
 }
 
 .navbar-link {
-  font-weight: 500;
-  color: var(--text-secondary);
-  transition: color var(--transition-fast);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
   position: relative;
+  padding: 0.5rem 0;
 }
 
 .navbar-link::after {
@@ -98,6 +100,132 @@
   color: var(--primary-color);
 }
 
+/* Custom Google Sign In Button */
+.btn-google-custom {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: white;
+  color: #3c4043;
+  border: 1px solid #dadce0;
+  border-radius: var(--radius-md);
+  /* Pill shape or rounded rect */
+  padding: 0.5rem 1rem;
+  font-family: 'Roboto', sans-serif;
+  /* Use app font */
+  font-weight: 500;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: 40px;
+}
+
+.btn-google-custom:hover {
+  background-color: #f8f9fa;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3);
+  border-color: #dadce0;
+}
+
+.btn-google-custom:active {
+  background-color: #e8f0fe;
+  border-color: #d2e3fc;
+}
+
+.google-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Dark mode support for Google button */
+[data-theme="dark"] .btn-google-custom {
+  background-color: #131314;
+  color: #e8eaed;
+  border-color: #5f6368;
+}
+
+[data-theme="dark"] .btn-google-custom:hover {
+  background-color: #303134;
+  border-color: #5f6368;
+}
+
+[data-theme="dark"] .btn-google-custom:active {
+  background-color: #3c4043;
+}
+
+/* User Menu Styles */
+.user-menu {
+  position: relative;
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.user-button:hover {
+  background-color: var(--bg-tertiary);
+  border-color: var(--primary-color);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 250px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: var(--spacing-sm);
+  z-index: 100;
+}
+
+.user-info {
+  padding: var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-sm);
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.user-email {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background-color: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.logout-button:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--error-color, #dc2626);
+}
+
 .btn {
   padding: 0.625rem 1.25rem;
   border-radius: var(--radius-md);
@@ -140,7 +268,7 @@
 }
 
 @media (max-width: 968px) {
-  .navbar-menu {
+  .nav-center-menu {
     position: fixed;
     top: var(--header-height);
     left: 0;
@@ -158,7 +286,7 @@
     margin: 0;
   }
 
-  .navbar-menu.active {
+  .nav-center-menu.active {
     transform: translateY(0);
     opacity: 1;
     visibility: visible;
@@ -178,14 +306,27 @@
     display: flex;
   }
 
-  .btn-primary,
-  .btn-secondary {
+  .btn-primary {
     display: none;
+  }
+
+  .btn-google-custom {
+    display: none;
+  }
+
+  .user-dropdown {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
 @media (max-width: 480px) {
   .navbar-brand span {
     font-size: 1.25rem;
+  }
+
+  .user-button span {
+    display: none;
   }
 }

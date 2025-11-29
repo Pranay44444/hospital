@@ -170,15 +170,39 @@ router.get('/me', auth, async (req, res) => {
 router.post('/google', async (req, res) => {
     try {
         const { token } = req.body;
-        const { OAuth2Client } = require('google-auth-library');
-        const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+        let name, email, googleId;
 
-        const ticket = await client.verifyIdToken({
-            idToken: token,
-            audience: process.env.GOOGLE_CLIENT_ID
-        });
+        // Try verifying as ID Token (Credential)
+        try {
+            const { OAuth2Client } = require('google-auth-library');
+            const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: process.env.GOOGLE_CLIENT_ID
+            });
+            const payload = ticket.getPayload();
+            name = payload.name;
+            email = payload.email;
+            googleId = payload.sub;
+        } catch (idTokenError) {
+            // If ID Token fails, try as Access Token (Implicit Flow)
+            try {
+                const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
 
-        const { name, email, sub: googleId } = ticket.getPayload();
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user info with access token');
+                }
+
+                const userData = await response.json();
+                name = userData.name;
+                email = userData.email;
+                googleId = userData.sub;
+            } catch (accessTokenError) {
+                throw new Error('Invalid token provided');
+            }
+        }
 
         // Check if user exists
         let user = await User.findOne({ email });
