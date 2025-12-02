@@ -5,6 +5,8 @@ import { useToast } from '../context/ToastContext';
 import authAPI, { appointmentAPI, doctorAPI } from '../services/api';
 import './Consultation.css';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+
 function Consultation() {
     const { appointmentId } = useParams();
     const navigate = useNavigate();
@@ -47,7 +49,7 @@ function Consultation() {
             // Fetch Prescription
             try {
                 // We need to add this method to api.js
-                const presResponse = await fetch(`http://localhost:3000/api/prescriptions/appointment/${appointmentId}`, {
+                const presResponse = await fetch(`${API_BASE_URL}/prescriptions/appointment/${appointmentId}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 const presData = await presResponse.json();
@@ -60,7 +62,7 @@ function Consultation() {
 
             // Fetch Review
             try {
-                const revResponse = await fetch(`http://localhost:3000/api/reviews/appointment/${appointmentId}`, {
+                const revResponse = await fetch(`${API_BASE_URL}/reviews/appointment/${appointmentId}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
                 });
                 const revData = await revResponse.json();
@@ -97,7 +99,7 @@ function Consultation() {
     const handleSubmitPrescription = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/api/prescriptions/create', {
+            const response = await fetch(`${API_BASE_URL}/prescriptions/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -125,7 +127,7 @@ function Consultation() {
     const handleSubmitReview = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/api/reviews/create', {
+            const response = await fetch(`${API_BASE_URL}/reviews/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
