@@ -23,6 +23,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true,
         sparse: true
+    },
+    isDoctor: {
+        type: Boolean,
+        default: false
+    },
+    doctorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Doctor',
+        default: null
     }
 }, {
     timestamps: true

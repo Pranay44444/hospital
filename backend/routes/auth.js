@@ -245,4 +245,40 @@ router.post('/google', async (req, res) => {
     }
 });
 
+// @route   PUT /api/auth/update-profile
+// @desc    Update user profile (name only)
+// @access  Private
+router.put('/update-profile', auth, async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        // Validation
+        if (!name || name.trim() === '') {
+            return res.status(400).json({
+                success: false,
+                message: 'Name is required'
+            });
+        }
+
+        // Update user
+        req.user.name = name.trim();
+        await req.user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully',
+            data: {
+                user: req.user.toJSON()
+            }
+        });
+    } catch (error) {
+        console.error('Update profile error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error updating profile',
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

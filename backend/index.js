@@ -29,7 +29,17 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Routes
 const authRoutes = require('./routes/auth');
+const doctorRoutes = require('./routes/doctor');
+const appointmentRoutes = require('./routes/appointments');
+const reviewRoutes = require('./routes/reviews');
+const prescriptionRoutes = require('./routes/prescriptions');
+const paymentRoutes = require('./routes/payment');
 app.use('/api/auth', authRoutes);
+app.use('/api/doctor', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -1,0 +1,391 @@
+================================================================================
+                    GIT COMMIT ATTRIBUTION GUIDE - TEAM PROJECT
+================================================================================
+
+TEAM MEMBERS & RESPONSIBILITIES
+--------------------------------
+1. Suryansh - Authentication & Database
+2. [Teammate 2 Name] - Frontend Components & UI
+3. Shikhar - Video Call & Appointment Booking UI
+4. [Teammate 4 Name] - Doctor Portal
+
+================================================================================
+SURYANSH - AUTHENTICATION & DATABASE
+================================================================================
+
+BACKEND FILES:
+--------------
+backend/.env
+backend/index.js
+backend/middleware/auth.js
+backend/models/User.js
+backend/models/Appointment.js
+backend/models/Doctor.js
+backend/models/Prescription.js
+backend/models/Review.js
+backend/routes/auth.js
+backend/routes/appointments.js
+backend/routes/payment.js
+backend/routes/prescriptions.js
+backend/routes/reviews.js
+backend/package.json
+backend/seed_db.js
+
+FRONTEND AUTH INTEGRATION:
+--------------------------
+Opd_flow/src/services/api.js
+Opd_flow/src/context/ToastContext.jsx
+Opd_flow/src/pages/Login.jsx
+Opd_flow/src/pages/Login.css
+
+COMMIT COMMANDS:
+----------------
+
+Step 1: Add backend authentication and database models
+-------------------------------------------------------
+git add backend/models/ backend/middleware/auth.js backend/routes/auth.js
+git commit -m "feat: implement user authentication and database models
+
+- Added User, Doctor, Appointment, Prescription, and Review models
+- Implemented JWT-based authentication middleware
+- Created auth routes for login/register" --author="Suryansh <suryansh@email.com>"
+
+
+Step 2: Add API routes
+----------------------
+git add backend/routes/appointments.js backend/routes/payment.js backend/routes/prescriptions.js backend/routes/reviews.js
+git commit -m "feat: implement API routes for appointments, payments, and reviews
+
+- Created appointment booking API
+- Integrated Razorpay payment gateway
+- Added prescription and review management" --author="Suryansh <suryansh@email.com>"
+
+
+Step 3: Add server configuration
+---------------------------------
+git add backend/index.js backend/.env backend/package.json backend/seed_db.js
+git commit -m "feat: setup backend server and database configuration
+
+- Configured Express server with MongoDB
+- Added environment variables
+- Created database seeding script" --author="Suryansh <suryansh@email.com>"
+
+
+Step 4: Add frontend API integration
+-------------------------------------
+git add Opd_flow/src/services/api.js Opd_flow/src/pages/Login.jsx Opd_flow/src/pages/Login.css Opd_flow/src/context/ToastContext.jsx
+git commit -m "feat: integrate frontend authentication with backend API
+
+- Created API service layer
+- Implemented login page with form validation
+- Added toast notification context" --author="Suryansh <suryansh@email.com>"
+
+
+================================================================================
+TEAMMATE 2 - FRONTEND COMPONENTS & UI
+================================================================================
+
+CORE COMPONENTS:
+----------------
+Opd_flow/src/components/Navbar.jsx
+Opd_flow/src/components/Navbar.css
+Opd_flow/src/components/Footer.jsx
+Opd_flow/src/components/Footer.css
+Opd_flow/src/components/Hero.jsx
+Opd_flow/src/components/Hero.css
+Opd_flow/src/components/FeatureGrid.jsx
+Opd_flow/src/components/FeatureGrid.css
+Opd_flow/src/components/HowItWorks.jsx
+Opd_flow/src/components/HowItWorks.css
+Opd_flow/src/components/Stats.jsx
+Opd_flow/src/components/Stats.css
+Opd_flow/src/components/Testimonials.jsx
+Opd_flow/src/components/Testimonials.css
+Opd_flow/src/components/FAQ.jsx
+Opd_flow/src/components/FAQ.css
+Opd_flow/src/components/Modal.jsx
+Opd_flow/src/components/Modal.css
+Opd_flow/src/components/Toast.jsx
+Opd_flow/src/components/Toast.css
+Opd_flow/src/components/CookieConsent.jsx
+Opd_flow/src/components/CookieConsent.css
+
+APP SETUP & ROUTING:
+--------------------
+Opd_flow/src/App.jsx
+Opd_flow/src/main.jsx
+Opd_flow/index.html
+Opd_flow/package.json
+Opd_flow/README.md
+
+GLOBAL STYLES:
+--------------
+Opd_flow/src/styles/global.css
+Opd_flow/src/styles/variables.css
+Opd_flow/src/pages/pages.css
+
+DASHBOARD & MISC PAGES:
+-----------------------
+Opd_flow/src/pages/Home.jsx
+Opd_flow/src/pages/Home.css
+Opd_flow/src/pages/Dashboard.jsx
+Opd_flow/src/pages/Dashboard.css
+Opd_flow/src/pages/Appointments.jsx
+Opd_flow/src/pages/Appointments.css
+Opd_flow/src/pages/Consultation.jsx
+Opd_flow/src/pages/Consultation.css
+Opd_flow/src/pages/Admin.jsx
+Opd_flow/src/pages/Intake.jsx
+
+COMMIT COMMANDS:
+----------------
+
+Step 1: Add reusable components
+--------------------------------
+git add Opd_flow/src/components/
+git commit -m "feat: create reusable UI components
+
+- Implemented Navbar with responsive design
+- Added Footer with links
+- Created Hero, Stats, Testimonials sections
+- Built FAQ and Modal components
+- Added Toast notifications and Cookie consent" --author="[Teammate2 Name] <teammate2@email.com>"
+
+
+Step 2: Add app configuration and routing
+------------------------------------------
+git add Opd_flow/src/App.jsx Opd_flow/src/main.jsx Opd_flow/index.html Opd_flow/package.json
+git commit -m "feat: setup React app with routing and dependencies
+
+- Configured React Router
+- Added project dependencies
+- Setup Vite configuration" --author="[Teammate2 Name] <teammate2@email.com>"
+
+
+Step 3: Add global styles
+--------------------------
+git add Opd_flow/src/styles/ Opd_flow/src/pages/pages.css
+git commit -m "style: implement global styles and CSS variables
+
+- Created design system with CSS variables
+- Added global reset and base styles
+- Implemented responsive design utilities" --author="[Teammate2 Name] <teammate2@email.com>"
+
+
+Step 4: Add dashboard and appointment pages
+--------------------------------------------
+git add Opd_flow/src/pages/Home.jsx Opd_flow/src/pages/Dashboard.jsx Opd_flow/src/pages/Appointments.jsx Opd_flow/src/pages/Consultation.jsx
+git add Opd_flow/src/pages/Home.css Opd_flow/src/pages/Dashboard.css Opd_flow/src/pages/Appointments.css Opd_flow/src/pages/Consultation.css
+git add Opd_flow/src/pages/Admin.jsx Opd_flow/src/pages/Intake.jsx
+git commit -m "feat: implement patient dashboard and appointment management
+
+- Created patient dashboard with stats
+- Built appointment listing and management
+- Added consultation interface
+- Implemented admin and intake pages" --author="[Teammate2 Name] <teammate2@email.com>"
+
+
+================================================================================
+SHIKHAR - VIDEO CALL & APPOINTMENT BOOKING UI
+================================================================================
+
+VIDEO CALL FEATURE:
+-------------------
+Opd_flow/src/pages/Video.jsx
+Opd_flow/src/pages/Video.css
+
+APPOINTMENT BOOKING UI:
+-----------------------
+Opd_flow/src/pages/Request.jsx
+Opd_flow/src/pages/Request.css
+Opd_flow/src/utils/slotHelpers.js
+Opd_flow/src/components/Calendar.jsx
+Opd_flow/src/components/Calendar.css
+
+DOCTOR LIST & CARD:
+-------------------
+Opd_flow/src/pages/DoctorList.jsx
+Opd_flow/src/pages/DoctorList.css
+Opd_flow/src/components/DoctorCard.jsx
+Opd_flow/src/components/DoctorCard.css
+
+COMMIT COMMANDS:
+----------------
+
+Step 1: Add video call feature
+-------------------------------
+git add Opd_flow/src/pages/Video.jsx Opd_flow/src/pages/Video.css
+git commit -m "feat: implement video consultation feature
+
+- Built video call interface using WebRTC
+- Added call controls (mute, video, end call)
+- Implemented real-time communication" --author="Shikhar <shikhar@email.com>"
+
+
+Step 2: Add appointment booking UI
+-----------------------------------
+git add Opd_flow/src/pages/Request.jsx Opd_flow/src/pages/Request.css
+git commit -m "feat: create appointment booking interface
+
+- Designed intuitive appointment request form
+- Integrated doctor selection with search/filter
+- Added date and time slot selection
+- Implemented payment integration UI" --author="Shikhar <shikhar@email.com>"
+
+
+Step 3: Add calendar and slot utilities
+----------------------------------------
+git add Opd_flow/src/components/Calendar.jsx Opd_flow/src/components/Calendar.css Opd_flow/src/utils/slotHelpers.js
+git commit -m "feat: implement calendar widget and time slot generation
+
+- Created reusable calendar component
+- Built slot generation algorithm
+- Added date/time formatting utilities" --author="Shikhar <shikhar@email.com>"
+
+
+Step 4: Add doctor listing interface
+-------------------------------------
+git add Opd_flow/src/pages/DoctorList.jsx Opd_flow/src/pages/DoctorList.css Opd_flow/src/components/DoctorCard.jsx Opd_flow/src/components/DoctorCard.css
+git commit -m "feat: create doctor listing and search interface
+
+- Built doctor browsing page with filters
+- Created doctor card component
+- Added search by specialization
+- Implemented responsive grid layout" --author="Shikhar <shikhar@email.com>"
+
+
+================================================================================
+TEAMMATE 4 - DOCTOR PORTAL
+================================================================================
+
+DOCTOR REGISTRATION:
+--------------------
+Opd_flow/src/pages/DoctorRegistration.jsx
+Opd_flow/src/pages/DoctorRegistration.css
+
+DOCTOR PROFILE:
+---------------
+Opd_flow/src/pages/DoctorProfile.jsx
+Opd_flow/src/pages/DoctorProfile.css
+
+BACKEND DOCTOR ROUTES:
+----------------------
+backend/routes/doctor.js
+
+COMMIT COMMANDS:
+----------------
+
+Step 1: Add doctor registration
+--------------------------------
+git add Opd_flow/src/pages/DoctorRegistration.jsx Opd_flow/src/pages/DoctorRegistration.css
+git commit -m "feat: implement doctor registration and onboarding
+
+- Created multi-step registration form
+- Added professional information fields
+- Implemented availability scheduling
+- Added consultation fee setting" --author="[Teammate4 Name] <teammate4@email.com>"
+
+
+Step 2: Add doctor profile management
+--------------------------------------
+git add Opd_flow/src/pages/DoctorProfile.jsx Opd_flow/src/pages/DoctorProfile.css
+git commit -m "feat: build doctor profile and management interface
+
+- Created doctor profile display
+- Added appointment management for doctors
+- Implemented schedule editing
+- Built ratings and reviews display" --author="[Teammate4 Name] <teammate4@email.com>"
+
+
+Step 3: Add backend doctor routes
+----------------------------------
+git add backend/routes/doctor.js
+git commit -m "feat: implement doctor management API routes
+
+- Created doctor registration endpoint
+- Added profile update functionality
+- Implemented schedule management API
+- Built doctor listing with filters" --author="[Teammate4 Name] <teammate4@email.com>"
+
+
+================================================================================
+EXECUTION STEPS
+================================================================================
+
+FOR EACH TEAM MEMBER:
+
+1. Pull latest code
+   -----------------
+   cd /path/to/project
+   git pull origin main
+
+
+2. Configure git (if needed)
+   --------------------------
+   git config user.name "Your Name"
+   git config user.email "your.email@example.com"
+
+
+3. Execute your commits
+   --------------------
+   Copy and paste the commands from your section above
+
+
+4. Push your changes
+   ------------------
+   git push origin main
+
+
+RECOMMENDED ORDER:
+------------------
+1. Suryansh goes first (backend foundation)
+2. Teammate 2 goes second (frontend components)
+3. Shikhar goes third (appointment & video features)
+4. Teammate 4 goes last (doctor portal)
+
+
+================================================================================
+IMPORTANT NOTES
+================================================================================
+
+- Don't force push - Use regular 'git push'
+- Pull before pushing - Always pull latest changes first
+- Test locally - Make sure server runs after each commit
+- Coordinate timing - Use a group chat to coordinate who's pushing
+- Resolve conflicts - If conflicts arise, discuss as a team
+
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If you get merge conflicts:
+---------------------------
+git pull origin main
+# Resolve conflicts in your editor
+git add .
+git commit -m "chore: resolve merge conflicts"
+git push origin main
+
+
+If you accidentally pushed as wrong author:
+-------------------------------------------
+Don't worry! Git history can be amended later if needed.
+Focus on getting all commits in first.
+
+
+================================================================================
+FINAL VERIFICATION
+================================================================================
+
+After all commits, verify with:
+-------------------------------
+git log --pretty=format:"%h - %an: %s" --graph
+
+This will show all commits with authors.
+Each person should see their name next to their commits!
+
+
+================================================================================
+                              END OF GUIDE
+================================================================================
