@@ -1,0 +1,102 @@
+================================================================================
+                    WHO IS DOING WHAT - SIMPLE SUMMARY
+================================================================================
+
+👤 SURYANSH (You)
+Role: Backend Developer & Database Architect
+-------------------------------------------------
+What you built:
+- Entire backend server (MongoDB + Express)
+- All database models (User, Doctor, Appointment, Review, Prescription)
+- Authentication system (JWT, login/register)
+- Payment integration (Razorpay)
+- All API routes (auth, appointments, payments, reviews, prescriptions)
+- Frontend login page and API service
+
+Your contribution: Backend infrastructure, security, database design
+
+
+👤 TEAMMATE 2
+Role: Frontend Developer & UI Components
+-------------------------------------------------
+What they built:
+- React app setup and routing
+- All home page sections (Hero, Features, How It Works, Stats, Testimonials, FAQ)
+- Shared components (Navbar, Footer, Modal, Toast, Cookie Consent)
+- Global styling system (CSS variables, design tokens)
+- Admin and intake pages
+
+Their contribution: App foundation, reusable components, home page
+
+
+👤 SHIKHAR
+Role: Patient-Side Features & Video Integration
+-------------------------------------------------
+What they built:
+- Video call consultation feature (WebRTC)
+- Appointment booking interface (Request page with calendar)
+- Doctor search and listing page
+- Doctor card component
+- Patient dashboard (view appointments, stats)
+- Appointments management page
+- Time slot generation utility
+
+Their contribution: Patient experience, video calls, booking system
+
+
+👤 TEAMMATE 4
+Role: Doctor Portal Developer
+-------------------------------------------------
+What they built:
+- Doctor registration (5-step onboarding form)
+- Doctor profile page (schedule, appointments, reviews)
+- Consultation interface (doctor-patient interaction)
+- Backend doctor API routes
+
+Their contribution: Complete doctor-side portal
+
+
+================================================================================
+SIMPLIFIED RESPONSIBILITIES
+================================================================================
+
+SURYANSH        → Backend + Database + Auth
+TEAMMATE 2      → Frontend Base + Components + Home Page
+SHIKHAR         → Patient Features + Booking + Video
+TEAMMATE 4      → Doctor Portal + Consultation
+
+
+================================================================================
+FILE COUNT
+================================================================================
+
+SURYANSH:       17 files
+TEAMMATE 2:     28 files
+SHIKHAR:        15 files
+TEAMMATE 4:     12 files
+
+Total: 72 files
+
+
+================================================================================
+WHAT TO SAY WHEN PRESENTING
+================================================================================
+
+SURYANSH:
+"I handled the entire backend architecture, built the database models,
+implemented JWT authentication, and integrated the Razorpay payment gateway."
+
+TEAMMATE 2:
+"I created the React app foundation, built all the reusable UI components,
+designed the home page, and established the global styling system."
+
+SHIKHAR:
+"I developed the video consultation feature using WebRTC, created the
+appointment booking interface with calendar, and built the patient dashboard."
+
+TEAMMATE 4:
+"I built the complete doctor portal including the multi-step registration,
+doctor profile management, and the consultation interface."
+
+
+================================================================================
