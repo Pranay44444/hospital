@@ -84,7 +84,6 @@ const doctorSchema = new mongoose.Schema({
 
 // Index for faster queries
 doctorSchema.index({ specialization: 1, status: 1 });
-doctorSchema.index({ userId: 1 });
 
 const Doctor = mongoose.model('Doctor', doctorSchema);
 
