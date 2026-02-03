@@ -39,3 +39,5 @@ coverage/
 # Misc
 *.cache
 .parcel-cache/
+graphify-out/
+CLAUDE.md
