@@ -1,68 +1,96 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Video, Clock, Shield } from 'lucide-react';
 import './Hero.css';
 
 function Hero() {
   return (
     <section className="hero">
-      <div className="hero-background"></div>
-      <div className="container hero-container">
-        <div className="hero-content">
-          <div className="hero-badge">
-            <Shield size={16} />
-            <span>HIPAA Compliant & Secure</span>
-          </div>
-
+      <div className="container hero-grid">
+        {/* Left: copy */}
+        <div className="hero-copy">
+          <span className="eyebrow">A Telehealth Platform · Est. 2021</span>
           <h1 className="hero-title">
-            Streamline Your OPD <span className="gradient-text">Video Consultations</span>
+            <span className="line">Outpatient</span>
+            <span className="line">care that <em>meets</em></span>
+            <span className="line">you where <em>you are.</em></span>
           </h1>
-
-          <p className="hero-description">
-            OPDFlow revolutionizes outpatient department workflows with seamless video consultation requests,
-            intelligent intake forms, and real-time patient-doctor connections. Experience healthcare without boundaries.
+          <p className="hero-sub">
+            OPD Flow connects patients and clinicians through calm, secure video consultations,
+            intelligent intake and a scheduling layer that respects everyone's time.
+            No waiting room. No paperwork you've already filled out.
           </p>
-
           <div className="hero-ctas">
             <Link to="/request" className="btn btn-primary btn-lg">
-              Request Appointment
-              <ArrowRight size={20} />
+              Request an appointment <span className="arrow-ic"/>
             </Link>
-            <Link to="/intake" className="btn btn-secondary btn-lg">
-              <Video size={20} />
-              Watch Demo
-            </Link>
+            <a href="#how" className="btn btn-ghost btn-lg">See how it works</a>
           </div>
-
-          <div className="hero-stats">
-            <div className="hero-stat">
-              <Clock size={20} />
-              <span><strong>5 min</strong> avg. wait time</span>
+          <div className="hero-meta">
+            <div className="hero-meta-item">
+              <div className="hero-meta-num">5<span className="hero-meta-accent">'</span></div>
+              <div className="hero-meta-lbl">Avg. wait time</div>
             </div>
-            <div className="hero-stat">
-              <Video size={20} />
-              <span><strong>10,000+</strong> consultations</span>
+            <div className="hero-meta-item">
+              <div className="hero-meta-num">142<span className="hero-meta-accent">k</span></div>
+              <div className="hero-meta-lbl">Consultations / yr</div>
             </div>
-            <div className="hero-stat">
-              <Shield size={20} />
-              <span><strong>100%</strong> secure</span>
+            <div className="hero-meta-item">
+              <div className="hero-meta-num">4.9<span className="hero-meta-accent">★</span></div>
+              <div className="hero-meta-lbl">Patient rating</div>
             </div>
           </div>
         </div>
 
-        <div className="hero-image">
-          <div className="hero-card floating">
-            <div className="card-icon">
-              <Video size={32} />
+        {/* Right: visual */}
+        <div className="hero-stage" aria-hidden="true">
+          <div className="stage-glow" />
+          <div className="stage-ground" />
+
+          {/* Animated medical cross */}
+          <div className="cross-scene">
+            <div className="orbit-ring" />
+            <div className="cross-3d">
+              <div className="cross-vert">
+                <div className="face f-front" />
+                <div className="face f-back" />
+                <div className="face f-left" />
+                <div className="face f-right" />
+                <div className="face f-top" />
+                <div className="face f-bottom" />
+              </div>
+              <div className="cross-horiz">
+                <div className="face f-front" />
+                <div className="face f-back" />
+                <div className="face f-left" />
+                <div className="face f-right" />
+                <div className="face f-top" />
+                <div className="face f-bottom" />
+              </div>
             </div>
-            <h3>Live Consultation</h3>
-            <p>Connect with doctors instantly</p>
+            <div className="pill-orbit pill-a" />
+            <div className="pill-orbit pill-b" />
           </div>
-          <div className="hero-card floating" style={{ animationDelay: '0.2s' }}>
-            <div className="card-icon">
-              <Clock size={32} />
+
+          {/* Floating info chips */}
+          <div className="float-chip chip-one">
+            <span className="chip-dot dot-orange" />
+            <div>
+              <strong>Dr. Meera Iyer</strong>
+              <span className="chip-sub">CARDIOLOGY · IN CALL</span>
             </div>
-            <h3>Quick Response</h3>
-            <p>Average 5-minute wait time</p>
+          </div>
+          <div className="float-chip chip-two">
+            <span className="chip-dot dot-green" />
+            <div>
+              <strong>Intake reviewed</strong>
+              <span className="chip-sub">4 MIN AGO</span>
+            </div>
+          </div>
+          <div className="float-chip chip-three">
+            <span className="chip-dot dot-orange" />
+            <div>
+              <strong>Rx dispatched</strong>
+              <span className="chip-sub">DELIVERY BY 6PM</span>
+            </div>
           </div>
         </div>
       </div>
