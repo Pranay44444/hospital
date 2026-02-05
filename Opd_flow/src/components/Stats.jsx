@@ -1,72 +1,40 @@
-import { useEffect, useRef, useState } from 'react'
-import './Stats.css'
+import './Stats.css';
 
-const data = [
-  { label: 'Active Patients', value: 15000, suffix: '+' },
-  { label: 'Doctors Available', value: 500, suffix: '+' },
-  { label: 'Consultations', value: 25000, suffix: '+' },
-  { label: 'Satisfaction Rate', value: 98, suffix: '%' }
-]
+const stats = [
+  { big: '142', suffix: 'k', label: 'Consultations completed in 2025' },
+  { big: '4.9', suffix: '/5', label: 'Avg. patient satisfaction across departments' },
+  { big: '96', suffix: '%', label: 'Of patients seen within 30 minutes of request' },
+  { big: '14', suffix: '+', label: 'Specialties under a single medical record' },
+];
 
 function Stats() {
-  const [show, setShow] = useState(false)
-  const ref = useRef(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setShow(true)
-      },
-      { threshold: 0.3 }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => { if (ref.current) observer.unobserve(ref.current) }
-  }, [])
-
   return (
-    <section className="stats" ref={ref}>
+    <section className="stats-section">
       <div className="container">
-        <div className="grid">
-          {data.map((item, i) => (
-            <Counter key={i} item={item} show={show} delay={i * 0.1} />
+        <div className="section-head" style={{ color: 'var(--accent-ink)' }}>
+          <span className="eyebrow" style={{ color: 'color-mix(in oklab, var(--accent-ink) 60%, transparent)' }}>
+            By the numbers
+          </span>
+          <div>
+            <h2 style={{ color: 'var(--accent-ink)' }}>
+              Measured by outcomes, <em className="italic-accent">not vanity.</em>
+            </h2>
+            <p style={{ color: 'color-mix(in oklab, var(--accent-ink) 75%, transparent)' }}>
+              Every quarter we publish anonymized outcome data — because trust in healthcare has to be earned with evidence.
+            </p>
+          </div>
+        </div>
+        <div className="stats-grid">
+          {stats.map((s, i) => (
+            <div key={i}>
+              <div className="stat-big">{s.big}<em>{s.suffix}</em></div>
+              <div className="stat-lbl">{s.label}</div>
+            </div>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
-function Counter({ item, show, delay }) {
-  const [count, setCount] = useState(0)
-
-  useEffect(() => {
-    if (!show) return
-    const duration = 2000
-    const steps = 60
-    const increment = item.value / steps
-    const stepTime = duration / steps
-    const timer = setTimeout(() => {
-      let current = 0
-      const interval = setInterval(() => {
-        current += increment
-        if (current >= item.value) {
-          setCount(item.value)
-          clearInterval(interval)
-        } else {
-          setCount(Math.floor(current))
-        }
-      }, stepTime)
-      return () => clearInterval(interval)
-    }, delay * 1000)
-    return () => clearTimeout(timer)
-  }, [show, item.value, delay])
-
-  return (
-    <div className="item">
-      <div className="value">{count.toLocaleString()}{item.suffix}</div>
-      <div className="label">{item.label}</div>
-    </div>
-  )
-}
-
-export default Stats
+export default Stats;
