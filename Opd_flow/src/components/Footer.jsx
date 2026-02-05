@@ -1,73 +1,52 @@
-import { Link } from 'react-router-dom'
-import { Activity, Mail, Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
-import './Footer.css'
+import { Link } from 'react-router-dom';
+import './Footer.css';
 
 function Footer() {
-  const year = new Date().getFullYear()
-
   return (
     <footer className="footer">
       <div className="container">
-        <div className="grid">
-          <div className="sec">
-            <div className="brand">
-              <Activity size={32} />
-              <span>OPDFlow</span>
-            </div>
-            <p className="desc">Making quality healthcare accessible to everyone through innovative video consultation technology.</p>
-            <div className="social">
-              <a href="#" className="link" aria-label="Facebook"><Facebook size={20} /></a>
-              <a href="#" className="link" aria-label="Twitter"><Twitter size={20} /></a>
-              <a href="#" className="link" aria-label="LinkedIn"><Linkedin size={20} /></a>
-              <a href="#" className="link" aria-label="Instagram"><Instagram size={20} /></a>
-            </div>
+        <div className="footer-grid">
+          <div>
+            <div className="footer-logo">OPD<br />Flow<span className="footer-dot">.</span></div>
+            <p className="footer-desc">A calm front door for outpatient care.<br />Licensed across 14 states. HIPAA-compliant.</p>
           </div>
-
-          <div className="sec">
-            <h3 className="title">Quick Links</h3>
-            <ul className="links">
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/request">Request Appointment</Link></li>
-              <li><Link to="/intake">Intake Form</Link></li>
-              <li><Link to="/login">Sign In</Link></li>
+          <div>
+            <h5>Visit</h5>
+            <ul>
+              <li><Link to="/doctors">Doctors</Link></li>
+              <li><Link to="/services">Services</Link></li>
+              <li><Link to="/about">About</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/request">Book appointment</Link></li>
+              <li><Link to="/dashboard">Patient portal</Link></li>
             </ul>
           </div>
-
-          <div className="sec">
-            <h3 className="title">Resources</h3>
-            <ul className="links">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">How It Works</a></li>
-              <li><a href="#">FAQs</a></li>
-              <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">Terms of Service</a></li>
+          <div>
+            <h5>Hours</h5>
+            <ul>
+              <li>Mon – Fri · 7a – 9p</li>
+              <li>Saturday · 8a – 6p</li>
+              <li>Sunday · 9a – 3p</li>
+              <li>24/7 virtual triage</li>
             </ul>
           </div>
-
-          <div className="sec">
-            <h3 className="title">Contact Us</h3>
-            <ul className="contact">
-              <li>
-                <Mail size={18} />
-                <a href="mailto:support@opdflow.com">support@opdflow.com</a>
-              </li>
+          <div>
+            <h5>Find us</h5>
+            <ul>
+              <li>2108 Canal Street</li>
+              <li>Pune, MH 411001</li>
+              <li>hello@opdflow.health</li>
+              <li>+91 20 4100 0000</li>
             </ul>
           </div>
         </div>
-
-        <div className="bottom">
-          <p>&copy; {year} OPDFlow. All rights reserved.</p>
-          <div className="legal">
-            <a href="#">Privacy Policy</a>
-            <span>•</span>
-            <a href="#">Terms of Service</a>
-            <span>•</span>
-            <a href="#">HIPAA Compliance</a>
-          </div>
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} OPD Flow Health Pvt. Ltd.</span>
+          <span>Crafted with care · Pune / Bengaluru</span>
         </div>
       </div>
     </footer>
-  )
+  );
 }
 
-export default Footer
+export default Footer;
