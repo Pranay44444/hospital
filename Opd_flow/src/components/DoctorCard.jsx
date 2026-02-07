@@ -1,55 +1,38 @@
 import { Link } from 'react-router-dom';
-import { User, MapPin, Award, Clock } from 'lucide-react';
 import './DoctorCard.css';
 
+const FALLBACK_IMAGES = [
+  'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&q=80',
+  'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=80',
+  'https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=600&q=80',
+  'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=600&q=80',
+  'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=600&q=80',
+  'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=600&q=80',
+  'https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=600&q=80',
+  'https://images.unsplash.com/photo-1607990281513-2c110a25bd8c?w=600&q=80',
+];
+
+let imgCounter = 0;
+
 const DoctorCard = ({ doctor }) => {
-    return (
-        <Link to={`/doctor/${doctor._id}`} className="doctor-card">
-            <div className="doctor-card-header">
-                <div className="doctor-avatar">
-                    <User size={40} />
-                </div>
-                <div className="doctor-info">
-                    <h3 className="doctor-name">{doctor.userId?.name || 'Unknown'}</h3>
-                    <p className="doctor-specialization">{doctor.specialization}</p>
-                </div>
-            </div>
+  const imgSrc = doctor.photo || FALLBACK_IMAGES[(imgCounter++) % FALLBACK_IMAGES.length];
+  const isAvailable = doctor.isAvailable !== false;
 
-            <div className="doctor-card-body">
-                <div className="doctor-detail">
-                    <Award size={16} />
-                    <span>{doctor.degree}</span>
-                </div>
-
-                <div className="doctor-detail">
-                    <Clock size={16} />
-                    <span>{doctor.experience} years experience</span>
-                </div>
-
-                <div className="doctor-detail">
-                    <MapPin size={16} />
-                    <span>{doctor.hospital}</span>
-                </div>
-
-                {doctor.location && (
-                    <div className="doctor-detail">
-                        <MapPin size={16} />
-                        <span>{doctor.location}</span>
-                    </div>
-                )}
-            </div>
-
-            {doctor.rating > 0 && (
-                <div className="doctor-rating">
-                    ⭐ {doctor.rating.toFixed(1)} ({doctor.reviewCount} reviews)
-                </div>
-            )}
-
-            <div className="doctor-card-footer">
-                <button className="btn-view-profile">View Profile</button>
-            </div>
-        </Link>
-    );
+  return (
+    <Link to={`/doctor/${doctor._id}`} className="doctor-card">
+      <div className="doctor-card-img">
+        <img src={imgSrc} alt={doctor.userId?.name || 'Doctor'} loading="lazy" />
+        <span className={`avail-badge ${isAvailable ? 'avail-on' : 'avail-off'}`}>
+          {isAvailable ? 'Available today' : 'Next week'}
+        </span>
+      </div>
+      <div className="doctor-name">{doctor.userId?.name || 'Doctor'}</div>
+      <div className="doctor-meta">
+        <span className="doctor-specialization">{doctor.specialization}</span>
+        <span>{doctor.experience} yrs</span>
+      </div>
+    </Link>
+  );
 };
 
 export default DoctorCard;
