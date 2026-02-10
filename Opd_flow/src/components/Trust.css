@@ -1,0 +1,35 @@
+.trust {
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.trust-track {
+  display: flex;
+  gap: 64px;
+  animation: trustScroll 40s linear infinite;
+  width: max-content;
+}
+
+.trust-item {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--ink-2);
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  white-space: nowrap;
+}
+.trust-item::after {
+  content: "✦";
+  color: var(--accent-2);
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+@keyframes trustScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
