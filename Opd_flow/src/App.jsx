@@ -14,6 +14,9 @@ import DoctorRegistration from './pages/DoctorRegistration'
 import DoctorList from './pages/DoctorList'
 import DoctorProfile from './pages/DoctorProfile'
 import Consultation from './pages/Consultation'
+import About from './pages/About'
+import Services from './pages/Services'
+import Contact from './pages/Contact'
 import './pages/pages.css'
 
 function App() {
@@ -34,6 +37,9 @@ function App() {
             <Route path="/doctors" element={<DoctorList />} />
             <Route path="/doctor/:id" element={<DoctorProfile />} />
             <Route path="/consultation/:appointmentId" element={<Consultation />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/contact" element={<Contact />} />
           </Routes>
         </main>
         <Footer />
