@@ -1,20 +1,23 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import authAPI from '../services/api';
 import './Login.css';
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const redirectTo = location.state?.from || '/';
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
       setLoading(true);
       const response = await authAPI.googleLogin(credentialResponse.credential);
       if (response.success) {
-        navigate('/');
+        navigate(redirectTo);
       }
     } catch (err) {
       setError(err.message || 'Google login failed');
