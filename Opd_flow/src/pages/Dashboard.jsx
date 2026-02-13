@@ -27,7 +27,8 @@ function Dashboard() {
     useEffect(() => {
         const currentUser = authAPI.getCurrentUser();
         if (!currentUser) {
-            navigate('/');
+            toast.info('Please sign in to view your dashboard');
+            navigate('/login', { state: { from: '/dashboard' } });
             return;
         }
 
