@@ -17,7 +17,8 @@ function Appointments() {
     useEffect(() => {
         const currentUser = authAPI.getCurrentUser();
         if (!currentUser) {
-            navigate('/');
+            toast.info('Please sign in to view your appointments');
+            navigate('/login', { state: { from: '/appointments' } });
             return;
         }
         setUser(currentUser);
