@@ -43,7 +43,8 @@ const DoctorRegistration = () => {
     useEffect(() => {
         const user = authAPI.getCurrentUser();
         if (!user) {
-            navigate('/');
+            toast.info('Please sign in to register as a doctor');
+            navigate('/login', { state: { from: '/doctor/register' } });
             return;
         }
 
