@@ -1,0 +1,28 @@
+/* About page — uses shared patterns from pages.css */
+.about-lead-img img {
+  border-radius: var(--radius-xl);
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.about-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.values-eyebrow {
+  color: color-mix(in oklab, var(--accent-ink) 60%, transparent);
+  margin-bottom: 32px;
+  display: block;
+}
+
+.team-card img {
+  border-radius: var(--radius-lg);
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  margin-bottom: 14px;
+}
