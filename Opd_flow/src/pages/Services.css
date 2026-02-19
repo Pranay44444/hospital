@@ -1,0 +1,44 @@
+/* Services page — uses shared patterns from pages.css */
+.dept-section {
+  padding: 0;
+}
+
+.svc-cta-section {
+  padding: 96px 0;
+  border-top: 1px solid var(--line);
+}
+
+.svc-cta-inner {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.svc-cta-inner h2 {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 6vw, 96px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+.svc-cta-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.svc-cta-right p {
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 44ch;
+}
+
+@media (max-width: 900px) {
+  .svc-cta-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
