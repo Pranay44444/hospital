@@ -199,7 +199,7 @@ export const authAPI = {
 
 // Doctor API
 export const doctorAPI = {
-    // Register as doctor
+    // Register as doctor (creates pending application)
     registerDoctor: async (doctorData) => {
         try {
             const data = await apiCall('/doctor/register', {
@@ -208,10 +208,9 @@ export const doctorAPI = {
             });
 
             if (data.success) {
-                // Update user data to reflect isDoctor status
                 const currentUser = getUser();
                 if (currentUser) {
-                    currentUser.isDoctor = true;
+                    currentUser.doctorApplicationStatus = 'pending';
                     currentUser.doctorId = data.data.doctor._id;
                     setUser(currentUser);
                 }
@@ -342,6 +341,20 @@ export const appointmentAPI = {
         }
     },
 
+    requestReschedule: async (appointmentId, payload) => {
+        return apiCall(`/appointments/${appointmentId}/reschedule`, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+        });
+    },
+
+    respondReschedule: async (appointmentId, action) => {
+        return apiCall(`/appointments/${appointmentId}/reschedule/respond`, {
+            method: 'POST',
+            body: JSON.stringify({ action }),
+        });
+    },
+
     getPatientStats: async () => {
         try {
             const data = await apiCall('/appointments/stats/patient', {
@@ -390,6 +403,30 @@ export const paymentAPI = {
             throw error;
         }
     },
+};
+
+// Admin API
+export const adminAPI = {
+    getPendingDoctors: () => apiCall('/admin/doctors/pending', { method: 'GET' }),
+    getDoctors: (status) => apiCall(`/admin/doctors${status ? `?status=${status}` : ''}`, { method: 'GET' }),
+    approveDoctor: (id) => apiCall(`/admin/doctors/${id}/approve`, { method: 'POST' }),
+    rejectDoctor: (id, reason) => apiCall(`/admin/doctors/${id}/reject`, {
+        method: 'POST',
+        body: JSON.stringify({ reason }),
+    }),
+    suspendDoctor: (id) => apiCall(`/admin/doctors/${id}/suspend`, { method: 'POST' }),
+    getStats: () => apiCall('/admin/stats', { method: 'GET' }),
+};
+
+// Messages API
+export const messageAPI = {
+    getConversations: () => apiCall('/messages/conversations', { method: 'GET' }),
+    getConversationWith: (userId) => apiCall(`/messages/with/${userId}`, { method: 'GET' }),
+    sendMessage: (recipientId, content, appointmentId = null) => apiCall('/messages', {
+        method: 'POST',
+        body: JSON.stringify({ recipientId, content, appointmentId }),
+    }),
+    getUnreadCount: () => apiCall('/messages/unread-count', { method: 'GET' }),
 };
 
 export default authAPI;
