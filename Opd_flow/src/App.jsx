@@ -5,6 +5,8 @@ import CookieConsent from './components/CookieConsent'
 import { ToastProvider } from './context/ToastContext'
 import Home from './pages/Home'
 import Login from './pages/Login'
+import Register from './pages/Register'
+import Messages from './pages/Messages'
 import Request from './pages/Request'
 import Dashboard from './pages/Dashboard'
 import Appointments from './pages/Appointments'
@@ -13,6 +15,7 @@ import Video from './pages/Video'
 import DoctorRegistration from './pages/DoctorRegistration'
 import DoctorList from './pages/DoctorList'
 import DoctorProfile from './pages/DoctorProfile'
+import DoctorPanel from './pages/DoctorPanel'
 import Consultation from './pages/Consultation'
 import About from './pages/About'
 import Services from './pages/Services'
@@ -28,6 +31,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/messages" element={<Messages />} />
             <Route path="/request" element={<Request />} />
             <Route path="/appointments" element={<Appointments />} />
             <Route path="/dashboard" element={<Dashboard />} />
@@ -36,6 +41,7 @@ function App() {
             <Route path="/doctor/register" element={<DoctorRegistration />} />
             <Route path="/doctors" element={<DoctorList />} />
             <Route path="/doctor/:id" element={<DoctorProfile />} />
+            <Route path="/doctor-panel" element={<DoctorPanel />} />
             <Route path="/consultation/:appointmentId" element={<Consultation />} />
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
