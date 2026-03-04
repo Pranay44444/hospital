@@ -1,9 +1,9 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, User, LogOut, LayoutDashboard, Stethoscope, MessageCircle, ShieldCheck } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useToast } from '../context/ToastContext';
-import authAPI from '../services/api';
+import authAPI, { messageAPI } from '../services/api';
 import './Navbar.css';
 
 const OpdLogo = () => (
@@ -33,11 +33,24 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     const currentUser = authAPI.getCurrentUser();
     setUser(currentUser);
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchUnread = () => {
+      messageAPI.getUnreadCount()
+        .then(res => { if (res.success) setUnread(res.data.count); })
+        .catch(() => {});
+    };
+    fetchUnread();
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   const isActive = (path) => location.pathname === path;
 
@@ -82,6 +95,12 @@ function Navbar() {
         </nav>
 
         <div className="navbar-actions">
+          {user && (
+            <Link to="/messages" className="navbar-icon-btn" aria-label="Messages" title="Messages">
+              <MessageCircle size={18} />
+              {unread > 0 && <span className="navbar-badge">{unread > 99 ? '99+' : unread}</span>}
+            </Link>
+          )}
           {user ? (
             <div className="user-menu">
               <button className="user-button" onClick={() => setShowUserMenu(!showUserMenu)}>
@@ -97,10 +116,25 @@ function Navbar() {
                   <Link to="/dashboard" className="dropdown-link" onClick={() => setShowUserMenu(false)}>
                     <LayoutDashboard size={16} /><span>Dashboard</span>
                   </Link>
-                  {!user.isDoctor && (
-                    <Link to="/doctor/register" className="dropdown-link" onClick={() => setShowUserMenu(false)}>
-                      <User size={16} /><span>Become a Doctor</span>
+                  {user.isDoctor && (
+                    <Link to="/doctor-panel" className="dropdown-link" onClick={() => setShowUserMenu(false)}>
+                      <Stethoscope size={16} /><span>Doctor Panel</span>
                     </Link>
+                  )}
+                  {user.role === 'admin' && (
+                    <Link to="/admin" className="dropdown-link" onClick={() => setShowUserMenu(false)}>
+                      <ShieldCheck size={16} /><span>Admin Panel</span>
+                    </Link>
+                  )}
+                  {!user.isDoctor && user.doctorApplicationStatus !== 'pending' && (
+                    <Link to="/doctor/register" className="dropdown-link" onClick={() => setShowUserMenu(false)}>
+                      <User size={16} /><span>{user.doctorApplicationStatus === 'rejected' ? 'Reapply as Doctor' : 'Become a Doctor'}</span>
+                    </Link>
+                  )}
+                  {user.doctorApplicationStatus === 'pending' && (
+                    <div className="dropdown-link" style={{ cursor: 'default', opacity: 0.7 }}>
+                      <Stethoscope size={16} /><span>Application Pending</span>
+                    </div>
                   )}
                   <button className="dropdown-link logout-button" onClick={handleLogout}>
                     <LogOut size={16} /><span>Logout</span>
