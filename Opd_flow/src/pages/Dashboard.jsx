@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Award, Clock, MapPin, Calendar, FileText, Activity, TrendingUp } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import authAPI, { doctorAPI, appointmentAPI, paymentAPI } from '../services/api';
+import authAPI, { doctorAPI, appointmentAPI } from '../services/api';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -411,6 +411,17 @@ function Dashboard() {
                 <h1>Patient Dashboard</h1>
                 <p>Welcome back, {user.name}</p>
             </div>
+
+            {user.doctorApplicationStatus === 'pending' && (
+                <div className="application-banner application-banner--pending">
+                    <strong>Doctor application pending.</strong> An admin is reviewing your request. You'll get access to the Doctor Panel once approved.
+                </div>
+            )}
+            {user.doctorApplicationStatus === 'rejected' && (
+                <div className="application-banner application-banner--rejected">
+                    <strong>Doctor application rejected.</strong> You can reapply from the "Become a Doctor" option.
+                </div>
+            )}
 
             <div className="dashboard-grid">
                 {/* Patient Statistics */}
