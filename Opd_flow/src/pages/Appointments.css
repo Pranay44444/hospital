@@ -1,3 +1,52 @@
+.appointment-reschedule-banner {
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  padding: 10px 12px;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin: 10px 0;
+  color: #92400e;
+  font-size: 13px;
+}
+
+.appointment-reschedule-banner p {
+  margin: 4px 0 0;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.appointment-reschedule-form {
+  background: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.appointment-reschedule-form .reschedule-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.appointment-reschedule-form input {
+  padding: 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.appointment-reschedule-form input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
 /* Appointments list — editorial design */
 .appointments-container {
   min-height: calc(100vh - var(--header-height));

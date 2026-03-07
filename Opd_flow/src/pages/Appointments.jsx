@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Clock, User, MapPin, CheckCircle, XCircle, AlertCircle, Video } from 'lucide-react';
+import { Calendar, Clock, User, MapPin, CheckCircle, XCircle, AlertCircle, Video, MessageCircle, CalendarClock } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import authAPI, { appointmentAPI } from '../services/api';
 import './Appointments.css';
@@ -13,6 +13,8 @@ function Appointments() {
     const [pastFilter, setPastFilter] = useState('all'); // 'all', 'completed', 'not-completed'
     const [loading, setLoading] = useState(true);
     const [appointments, setAppointments] = useState([]);
+    const [reschedulingId, setReschedulingId] = useState(null);
+    const [rescheduleForm, setRescheduleForm] = useState({ proposedDate: '', proposedTime: '', note: '' });
 
     useEffect(() => {
         const currentUser = authAPI.getCurrentUser();
@@ -40,6 +42,47 @@ function Appointments() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleRescheduleSubmit = async (apt) => {
+        if (!rescheduleForm.proposedDate || !rescheduleForm.proposedTime) {
+            toast.error('Please select a date and time');
+            return;
+        }
+        try {
+            const res = await appointmentAPI.requestReschedule(apt._id, rescheduleForm);
+            if (res.success) {
+                toast.success('Reschedule request sent');
+                setReschedulingId(null);
+                setRescheduleForm({ proposedDate: '', proposedTime: '', note: '' });
+                fetchAppointments(user);
+            }
+        } catch (err) {
+            toast.error(err.message || 'Failed to request reschedule');
+        }
+    };
+
+    const handleRescheduleRespond = async (apt, action) => {
+        try {
+            const res = await appointmentAPI.respondReschedule(apt._id, action);
+            if (res.success) {
+                toast.success(`Reschedule ${action}d`);
+                fetchAppointments(user);
+            }
+        } catch (err) {
+            toast.error(err.message || 'Failed to respond');
+        }
+    };
+
+    const messageOtherParty = (apt) => {
+        const otherUserId = user.isDoctor
+            ? (apt.patientId?._id || apt.patientId)
+            : (apt.doctorId?.userId?._id || apt.doctorId?.userId);
+        if (!otherUserId) {
+            toast.error('Cannot start chat — user info missing');
+            return;
+        }
+        navigate(`/messages?to=${otherUserId}`);
     };
 
     const handleStatusUpdate = async (appointmentId, newStatus) => {
@@ -272,60 +315,99 @@ function Appointments() {
                                     )}
                                 </div>
 
-                                <div className="appointment-actions">
-                                    {activeTab === 'upcoming' && appointment.status === 'confirmed' && appointment.type === 'video' && (
-                                        <button
-                                            onClick={() => {
-                                                // Extract unique ID from link or use appointment ID
-                                                let uniqueId = appointment._id;
-                                                if (appointment.meetingLink) {
-                                                    const parts = appointment.meetingLink.split('-');
-                                                    // Try to get the last part if it looks like a unique ID
-                                                    if (parts.length > 2) {
-                                                        uniqueId = parts.slice(2).join('-');
+                                {appointment.rescheduleRequest?.status === 'pending' && (
+                                    <div className="appointment-reschedule-banner">
+                                        <CalendarClock size={16} />
+                                        <div>
+                                            <strong>{appointment.rescheduleRequest.requestedBy === (user.isDoctor ? 'doctor' : 'patient') ? 'You' : 'The other party'} proposed a new slot:</strong>{' '}
+                                            {new Date(appointment.rescheduleRequest.proposedDate).toLocaleDateString()} at {appointment.rescheduleRequest.proposedTime}
+                                            {appointment.rescheduleRequest.note && <p>"{appointment.rescheduleRequest.note}"</p>}
+                                            {appointment.rescheduleRequest.requestedBy !== (user.isDoctor ? 'doctor' : 'patient') && (
+                                                <div className="appointment-actions" style={{ marginTop: 8 }}>
+                                                    <button className="btn-action confirm" onClick={() => handleRescheduleRespond(appointment, 'approve')}>Accept</button>
+                                                    <button className="btn-action cancel" onClick={() => handleRescheduleRespond(appointment, 'reject')}>Reject</button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {reschedulingId === appointment._id ? (
+                                    <div className="appointment-reschedule-form">
+                                        <div className="reschedule-fields">
+                                            <input type="date" min={new Date().toISOString().split('T')[0]}
+                                                value={rescheduleForm.proposedDate}
+                                                onChange={(e) => setRescheduleForm(f => ({ ...f, proposedDate: e.target.value }))} />
+                                            <input type="time"
+                                                value={rescheduleForm.proposedTime}
+                                                onChange={(e) => setRescheduleForm(f => ({ ...f, proposedTime: e.target.value }))} />
+                                        </div>
+                                        <input type="text" placeholder="Note (optional)"
+                                            value={rescheduleForm.note}
+                                            onChange={(e) => setRescheduleForm(f => ({ ...f, note: e.target.value }))} />
+                                        <div className="appointment-actions">
+                                            <button className="btn-action confirm" onClick={() => handleRescheduleSubmit(appointment)}>Send</button>
+                                            <button className="btn-action-secondary" onClick={() => { setReschedulingId(null); setRescheduleForm({ proposedDate: '', proposedTime: '', note: '' }); }}>Cancel</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="appointment-actions">
+                                        {activeTab === 'upcoming' && appointment.status === 'confirmed' && appointment.type === 'video' && (
+                                            <button
+                                                onClick={() => {
+                                                    let uniqueId = appointment._id;
+                                                    if (appointment.meetingLink) {
+                                                        const parts = appointment.meetingLink.split('-');
+                                                        if (parts.length > 2) {
+                                                            uniqueId = parts.slice(2).join('-');
+                                                        }
                                                     }
-                                                }
-                                                navigate(`/video/${uniqueId}`, { state: { appointment } });
-                                            }}
-                                            className="btn-action video-call"
-                                        >
-                                            <Video size={16} />
-                                            Join Video Call
-                                        </button>
-                                    )}
-                                    {activeTab === 'upcoming' && appointment.status === 'confirmed' && user.isDoctor && (
-                                        <button
-                                            className="btn-action"
-                                            onClick={() => navigate(`/consultation/${appointment._id}`, { state: { appointment } })}
-                                        >
-                                            Add Prescription
-                                        </button>
-                                    )}
-                                    {activeTab === 'upcoming' && appointment.status === 'pending' && user.isDoctor && (
-                                        <>
-                                            <button
-                                                className="btn-action confirm"
-                                                onClick={() => handleStatusUpdate(appointment._id, 'confirmed')}
+                                                    navigate(`/video/${uniqueId}`, { state: { appointment } });
+                                                }}
+                                                className="btn-action video-call"
                                             >
-                                                Confirm
+                                                <Video size={16} />
+                                                Join Video Call
                                             </button>
+                                        )}
+                                        {activeTab === 'upcoming' && appointment.status === 'confirmed' && user.isDoctor && (
                                             <button
-                                                className="btn-action cancel"
-                                                onClick={() => handleStatusUpdate(appointment._id, 'cancelled')}
+                                                className="btn-action"
+                                                onClick={() => navigate(`/consultation/${appointment._id}`, { state: { appointment } })}
                                             >
-                                                Cancel
+                                                Add Prescription
                                             </button>
-                                        </>
-                                    )}
-                                    {appointment.status !== 'pending' && (
-                                        <button
-                                            className="btn-action-secondary"
-                                            onClick={() => navigate(`/consultation/${appointment._id}`, { state: { appointment } })}
-                                        >
-                                            View Details
-                                        </button>
-                                    )}
-                                </div>
+                                        )}
+                                        {activeTab === 'upcoming' && appointment.status === 'pending' && user.isDoctor && (
+                                            <>
+                                                <button className="btn-action confirm" onClick={() => handleStatusUpdate(appointment._id, 'confirmed')}>
+                                                    Confirm
+                                                </button>
+                                                <button className="btn-action cancel" onClick={() => handleStatusUpdate(appointment._id, 'cancelled')}>
+                                                    Cancel
+                                                </button>
+                                            </>
+                                        )}
+                                        {activeTab === 'upcoming' && (appointment.status === 'pending' || appointment.status === 'confirmed') && !appointment.rescheduleRequest?.status && (
+                                            <button className="btn-action-secondary" onClick={() => setReschedulingId(appointment._id)}>
+                                                <CalendarClock size={14} /> Reschedule
+                                            </button>
+                                        )}
+                                        {(appointment.status === 'pending' || appointment.status === 'confirmed') && (
+                                            <button className="btn-action-secondary" onClick={() => messageOtherParty(appointment)}>
+                                                <MessageCircle size={14} /> Message
+                                            </button>
+                                        )}
+                                        {appointment.status !== 'pending' && (
+                                            <button
+                                                className="btn-action-secondary"
+                                                onClick={() => navigate(`/consultation/${appointment._id}`, { state: { appointment } })}
+                                            >
+                                                View Details
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
