@@ -150,9 +150,15 @@ const DoctorRegistration = () => {
                 return;
             }
 
+            // Map short day names to full names (backend enum uses full names)
+            const dayNameMap = {
+                Sun: 'Sunday', Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday',
+                Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday'
+            };
+
             // Create timings array with sessions for each available day
             const timings = availableDays.map(day => ({
-                day: day,
+                day: dayNameMap[day] || day,
                 slots: formData.sessions.map(session => ({
                     startTime: session.startTime,
                     endTime: session.endTime,
@@ -180,8 +186,10 @@ const DoctorRegistration = () => {
             console.log('Registration response:', response);
 
             if (response.success) {
-                toast.success('Successfully registered as a doctor!');
-                navigate('/doctors');
+                // Refresh user profile so doctorApplicationStatus is reflected in UI
+                try { await authAPI.getProfile(); } catch (e) { /* ignore */ }
+                toast.success('Application submitted! An admin will review it shortly.');
+                navigate('/dashboard');
             } else {
                 // Handle API errors that don't throw exceptions
                 setError(response.message || 'Failed to register as doctor');
