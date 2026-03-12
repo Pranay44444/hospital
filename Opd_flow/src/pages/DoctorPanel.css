@@ -1,0 +1,311 @@
+.dp-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  font-size: 1.1rem;
+  color: var(--text-muted, #6b7280);
+}
+
+.dp-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* Header */
+.dp-header {
+  margin-bottom: 2rem;
+}
+
+.dp-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text, #111827);
+  margin: 0 0 0.25rem;
+}
+
+.dp-header p {
+  color: var(--text-muted, #6b7280);
+  margin: 0;
+}
+
+/* Stats */
+.dp-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dp-stat {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.dp-stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--accent-light, #eff6ff);
+  color: var(--accent, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dp-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text, #111827);
+  margin: 0;
+  line-height: 1;
+}
+
+.dp-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted, #6b7280);
+  margin: 0.2rem 0 0;
+}
+
+/* Tabs */
+.dp-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border, #e5e7eb);
+  margin-bottom: 1.5rem;
+}
+
+.dp-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted, #6b7280);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.dp-tab--active {
+  color: var(--accent, #2563eb);
+  border-bottom-color: var(--accent, #2563eb);
+}
+
+/* Grid */
+.dp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+/* Appointment Card */
+.dp-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: box-shadow 0.15s;
+}
+
+.dp-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+}
+
+.dp-card--pending { border-left: 3px solid #f59e0b; }
+.dp-card--confirmed { border-left: 3px solid #10b981; }
+.dp-card--completed { border-left: 3px solid #6b7280; }
+.dp-card--cancelled { border-left: 3px solid #ef4444; opacity: 0.7; }
+
+.dp-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dp-card-time {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text, #111827);
+}
+
+.dp-card-date {
+  font-weight: 400;
+  color: var(--text-muted, #6b7280);
+  margin-left: 0.25rem;
+}
+
+.dp-status {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.dp-status--pending { background: #fef3c7; color: #92400e; }
+.dp-status--confirmed { background: #d1fae5; color: #065f46; }
+.dp-status--completed { background: #f3f4f6; color: #374151; }
+.dp-status--cancelled { background: #fee2e2; color: #991b1b; }
+
+.icon-confirmed, .icon-completed { color: #10b981; }
+.icon-pending { color: #f59e0b; }
+.icon-cancelled { color: #ef4444; }
+
+.dp-card-patient {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.dp-patient-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text, #111827);
+  margin: 0;
+}
+
+.dp-patient-contact {
+  font-size: 0.78rem;
+  color: var(--text-muted, #6b7280);
+  margin: 0.1rem 0 0;
+}
+
+.dp-badge-video {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.dp-reason {
+  font-size: 0.82rem;
+  color: var(--text-muted, #6b7280);
+  background: var(--bg, #f9fafb);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.dp-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dp-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.dp-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.dp-btn:active { transform: translateY(0); }
+
+.dp-btn--confirm { background: #10b981; color: #fff; }
+.dp-btn--cancel { background: #fee2e2; color: #991b1b; }
+.dp-btn--complete { background: #2563eb; color: #fff; }
+.dp-btn--secondary { background: var(--bg, #f3f4f6); color: var(--text, #374151); border: 1px solid var(--border, #e5e7eb); }
+.dp-btn--video { background: #1d4ed8; color: #fff; }
+
+/* Reschedule */
+.dp-reschedule-banner {
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #92400e;
+}
+
+.dp-reschedule-note {
+  margin: 0.3rem 0 0;
+  font-style: italic;
+  font-size: 0.82rem;
+}
+
+.dp-reschedule-form {
+  background: var(--bg, #f9fafb);
+  border: 1px dashed var(--border, #e5e7eb);
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dp-reschedule-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.dp-reschedule-form input {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.dp-reschedule-form input:focus {
+  outline: none;
+  border-color: var(--accent, #2563eb);
+}
+
+/* Empty */
+.dp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem 2rem;
+  color: var(--text-muted, #9ca3af);
+  text-align: center;
+}
+
+.dp-empty p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+@media (max-width: 640px) {
+  .dp-container { padding: 1.25rem 1rem 3rem; }
+  .dp-stats { grid-template-columns: repeat(2, 1fr); }
+  .dp-grid { grid-template-columns: 1fr; }
+}
