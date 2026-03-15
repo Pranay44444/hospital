@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, X, User as UserIcon, Award, Clock, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { doctorAPI, appointmentAPI, paymentAPI } from '../services/api';
+import { doctorAPI, appointmentAPI } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import './Request.css';
 
@@ -102,78 +102,12 @@ function Request() {
 
     setLoading(true);
     setError('');
-
-    try {
-      // 1. Create Razorpay Order
-      const amount = selectedDoctor.consultationFee || 500; // Use doctor's fee or default to ₹500
-
-      console.log('Creating order with amount:', amount);
-
-      // Pass amount directly as a number, not as an object
-      const orderResponse = await paymentAPI.createOrder(amount);
-
-      if (!orderResponse.success) {
-        toast.error('Failed to create payment order');
-        return;
-      }
-
-      const order = orderResponse.data.order;
-
-      // 2. Open Razorpay Checkout
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_dummy',
-        amount: order.amount,
-        currency: order.currency,
-        name: "OPD Flow",
-        description: `Appointment with Dr. ${selectedDoctor.userId?.name}`,
-        order_id: order.id,
-        handler: async function (response) {
-          try {
-            // 3. Verify Payment
-            const verifyResponse = await paymentAPI.verifyPayment({
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature
-            });
-
-            if (verifyResponse.success) {
-              // 4. Create Appointment
-              await createAppointment(response.razorpay_payment_id);
-            } else {
-              toast.error('Payment verification failed');
-            }
-          } catch (err) {
-            console.error('Payment verification error:', err);
-            toast.error('Payment verification failed');
-          }
-        },
-        prefill: {
-          name: appointmentData.name,
-          email: appointmentData.email,
-          contact: appointmentData.phone
-        },
-        theme: {
-          color: "#2563eb"
-        }
-      };
-
-      const rzp1 = new window.Razorpay(options);
-      rzp1.on('payment.failed', function (response) {
-        toast.error(`Payment Failed: ${response.error.description}`);
-      });
-      rzp1.open();
-
-    } catch (err) {
-      console.error('Payment initiation error:', err);
-      toast.error('Failed to initiate payment');
-    } finally {
-      setLoading(false);
-    }
+    await createAppointment();
+    setLoading(false);
   };
 
-  const createAppointment = async (paymentId) => {
+  const createAppointment = async () => {
     try {
-      setLoading(true);
       const appointmentPayload = {
         doctorId: selectedDoctor._id,
         patientName: appointmentData.name,
@@ -183,35 +117,19 @@ function Request() {
         time: appointmentData.time,
         reason: appointmentData.reason,
         type: appointmentData.type,
-        paymentStatus: 'paid',
-        paymentId: paymentId
       };
 
       const response = await appointmentAPI.createAppointment(appointmentPayload);
 
       if (response.success) {
-        toast.success(`Appointment booked successfully!`);
-
-        // Reset form
-        setAppointmentData({
-          name: '',
-          email: '',
-          phone: '',
-          date: '',
-          time: '',
-          reason: '',
-          type: 'in-person'
-        });
+        toast.success('Appointment booked successfully!');
+        setAppointmentData({ name: '', email: '', phone: '', date: '', time: '', reason: '', type: 'in-person' });
         setSelectedDoctor(null);
-
-        // Navigate to appointments page
         navigate('/appointments');
       }
     } catch (err) {
       console.error('Create appointment error:', err);
-      toast.error('Payment successful but failed to create appointment. Please contact support with Payment ID: ' + paymentId);
-    } finally {
-      setLoading(false);
+      toast.error('Failed to book appointment. Please try again.');
     }
   };
 
@@ -423,8 +341,8 @@ function Request() {
                 />
               </div>
 
-              <button type="submit" className="btn-submit-appointment" disabled={!selectedDoctor}>
-                Pay & Book Appointment (₹{selectedDoctor?.consultationFee || 500})
+              <button type="submit" className="btn-submit-appointment" disabled={!selectedDoctor || loading}>
+                {loading ? 'Booking...' : 'Book Appointment'}
               </button>
             </form>
           </div>
