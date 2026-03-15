@@ -33,11 +33,15 @@ const doctorRoutes = require('./routes/doctor');
 const appointmentRoutes = require('./routes/appointments');
 const reviewRoutes = require('./routes/reviews');
 const prescriptionRoutes = require('./routes/prescriptions');
+const adminRoutes = require('./routes/admin');
+const messageRoutes = require('./routes/messages');
 app.use('/api/auth', authRoutes);
 app.use('/api/doctor', doctorRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
