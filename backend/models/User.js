@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema({
         unique: true,
         sparse: true
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
     isDoctor: {
         type: Boolean,
         default: false
@@ -32,6 +37,11 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Doctor',
         default: null
+    },
+    doctorApplicationStatus: {
+        type: String,
+        enum: ['none', 'pending', 'rejected'],
+        default: 'none'
     }
 }, {
     timestamps: true
