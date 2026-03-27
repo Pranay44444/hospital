@@ -55,6 +55,14 @@ const appointmentSchema = new mongoose.Schema({
     },
     meetingLink: {
         type: String
+    },
+    rescheduleRequest: {
+        proposedDate: Date,
+        proposedTime: String,
+        requestedBy: { type: String, enum: ['patient', 'doctor'] },
+        note: String,
+        status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+        createdAt: Date
     }
 }, {
     timestamps: true
