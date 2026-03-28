@@ -9,17 +9,8 @@ const auth = require('../middleware/auth');
 // @access  Private
 router.post('/register', auth, async (req, res) => {
     try {
-        const { hospital, degree, specialization, experience, location, timings, bio } = req.body;
+        const { hospital, degree, specialization, experience, location, timings, bio, consultationFee } = req.body;
         const userId = req.user._id;
-
-        // Check if user is already a doctor
-        const existingDoctor = await Doctor.findOne({ userId });
-        if (existingDoctor) {
-            return res.status(400).json({
-                success: false,
-                message: 'You are already registered as a doctor'
-            });
-        }
 
         // Validation
         if (!hospital || !degree || !specialization || experience === undefined) {
@@ -29,7 +20,48 @@ router.post('/register', auth, async (req, res) => {
             });
         }
 
-        // Create doctor profile
+        // Check for existing doctor profile
+        const existingDoctor = await Doctor.findOne({ userId });
+        if (existingDoctor) {
+            // Block if already approved/active — they shouldn't re-apply
+            if (existingDoctor.status === 'approved' || existingDoctor.status === 'active') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'You are already an approved doctor'
+                });
+            }
+            // Block if there's a pending application (prevent spam)
+            if (existingDoctor.status === 'pending') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'You already have a pending application. Please wait for admin review.'
+                });
+            }
+            // Allow resubmit if rejected or suspended — update the existing doc
+            existingDoctor.hospital = hospital;
+            existingDoctor.degree = degree;
+            existingDoctor.specialization = specialization;
+            existingDoctor.experience = experience;
+            existingDoctor.location = location;
+            existingDoctor.timings = timings || [];
+            existingDoctor.bio = bio;
+            existingDoctor.consultationFee = consultationFee || 500;
+            existingDoctor.status = 'pending';
+            existingDoctor.rejectionReason = '';
+            await existingDoctor.save();
+
+            req.user.doctorApplicationStatus = 'pending';
+            req.user.doctorId = existingDoctor._id;
+            await req.user.save();
+
+            return res.status(200).json({
+                success: true,
+                message: 'Application resubmitted. An admin will review it shortly.',
+                data: { doctor: existingDoctor }
+            });
+        }
+
+        // Create new doctor profile (pending admin approval)
         const doctor = new Doctor({
             userId,
             hospital,
@@ -39,22 +71,20 @@ router.post('/register', auth, async (req, res) => {
             location,
             timings: timings || [],
             bio,
-            status: 'active' // Auto-approve as per user request
+            consultationFee: consultationFee || 500,
+            status: 'pending'
         });
 
         await doctor.save();
 
-        // Update user model
-        req.user.isDoctor = true;
+        req.user.doctorApplicationStatus = 'pending';
         req.user.doctorId = doctor._id;
         await req.user.save();
 
         res.status(201).json({
             success: true,
-            message: 'Doctor profile created successfully',
-            data: {
-                doctor: doctor
-            }
+            message: 'Application submitted. An admin will review your request shortly.',
+            data: { doctor }
         });
     } catch (error) {
         console.error('Doctor registration error:', error);
@@ -73,8 +103,8 @@ router.get('/list', async (req, res) => {
     try {
         const { specialization, search } = req.query;
 
-        // Build query
-        let query = { status: 'active' };
+        // Build query (only show approved doctors)
+        let query = { status: 'approved' };
 
         if (specialization) {
             query.specialization = specialization;
