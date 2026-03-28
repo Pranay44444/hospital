@@ -13,6 +13,25 @@ const generateToken = (userId) => {
     );
 };
 
+// Resolve role from ADMIN_EMAILS env (comma-separated)
+const resolveRole = (email) => {
+    const adminEmails = (process.env.ADMIN_EMAILS || '')
+        .split(',')
+        .map(e => e.trim().toLowerCase())
+        .filter(Boolean);
+    return adminEmails.includes(email.toLowerCase()) ? 'admin' : 'user';
+};
+
+// Ensure existing user has up-to-date role from env (in case ADMIN_EMAILS changes)
+const syncRole = async (user) => {
+    const expectedRole = resolveRole(user.email);
+    if (user.role !== expectedRole) {
+        user.role = expectedRole;
+        await user.save();
+    }
+    return user;
+};
+
 // @route   POST /api/auth/register
 // @desc    Register a new user
 // @access  Public
@@ -41,7 +60,8 @@ router.post('/register', async (req, res) => {
         const user = new User({
             name,
             email,
-            password
+            password,
+            role: resolveRole(email)
         });
 
         await user.save();
@@ -99,6 +119,8 @@ router.post('/login', async (req, res) => {
                 message: 'Invalid email or password'
             });
         }
+
+        await syncRole(user);
 
         // Generate token
         const token = generateToken(user._id);
@@ -219,10 +241,13 @@ router.post('/google', async (req, res) => {
                 name,
                 email,
                 googleId,
-                password: '' // No password for Google users
+                password: '', // No password for Google users
+                role: resolveRole(email)
             });
             await user.save();
         }
+
+        await syncRole(user);
 
         // Generate token
         const jwtToken = generateToken(user._id);
