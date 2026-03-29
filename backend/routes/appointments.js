@@ -253,4 +253,81 @@ router.get('/stats/doctor', auth, async (req, res) => {
     }
 });
 
+// POST /api/appointments/:id/reschedule — patient or doctor requests reschedule
+router.post('/:id/reschedule', auth, async (req, res) => {
+    try {
+        const { proposedDate, proposedTime, note } = req.body;
+        if (!proposedDate || !proposedTime) {
+            return res.status(400).json({ success: false, message: 'proposedDate and proposedTime are required' });
+        }
+
+        const appointment = await Appointment.findById(req.params.id).populate('doctorId');
+        if (!appointment) return res.status(404).json({ success: false, message: 'Appointment not found' });
+
+        // Determine who is requesting
+        const isPatient = String(appointment.patientId) === String(req.user._id);
+        const isDoctor = appointment.doctorId && String(appointment.doctorId.userId) === String(req.user._id);
+        if (!isPatient && !isDoctor) {
+            return res.status(403).json({ success: false, message: 'Not authorized for this appointment' });
+        }
+
+        appointment.rescheduleRequest = {
+            proposedDate,
+            proposedTime,
+            requestedBy: isPatient ? 'patient' : 'doctor',
+            note: note || '',
+            status: 'pending',
+            createdAt: new Date()
+        };
+        await appointment.save();
+
+        res.json({ success: true, message: 'Reschedule request submitted', data: { appointment } });
+    } catch (error) {
+        console.error('Reschedule request error:', error);
+        res.status(500).json({ success: false, message: 'Error submitting reschedule request', error: error.message });
+    }
+});
+
+// POST /api/appointments/:id/reschedule/respond — other party approves/rejects
+router.post('/:id/reschedule/respond', auth, async (req, res) => {
+    try {
+        const { action } = req.body; // 'approve' | 'reject'
+        if (!['approve', 'reject'].includes(action)) {
+            return res.status(400).json({ success: false, message: 'action must be approve or reject' });
+        }
+
+        const appointment = await Appointment.findById(req.params.id).populate('doctorId');
+        if (!appointment) return res.status(404).json({ success: false, message: 'Appointment not found' });
+        if (!appointment.rescheduleRequest || appointment.rescheduleRequest.status !== 'pending') {
+            return res.status(400).json({ success: false, message: 'No pending reschedule request' });
+        }
+
+        const isPatient = String(appointment.patientId) === String(req.user._id);
+        const isDoctor = appointment.doctorId && String(appointment.doctorId.userId) === String(req.user._id);
+        if (!isPatient && !isDoctor) {
+            return res.status(403).json({ success: false, message: 'Not authorized' });
+        }
+
+        // Only the other party can respond
+        const requester = appointment.rescheduleRequest.requestedBy;
+        if ((requester === 'patient' && !isDoctor) || (requester === 'doctor' && !isPatient)) {
+            return res.status(403).json({ success: false, message: 'Only the other party can respond to this request' });
+        }
+
+        if (action === 'approve') {
+            appointment.date = appointment.rescheduleRequest.proposedDate;
+            appointment.time = appointment.rescheduleRequest.proposedTime;
+            appointment.rescheduleRequest.status = 'approved';
+        } else {
+            appointment.rescheduleRequest.status = 'rejected';
+        }
+        await appointment.save();
+
+        res.json({ success: true, message: `Reschedule ${action}d`, data: { appointment } });
+    } catch (error) {
+        console.error('Reschedule respond error:', error);
+        res.status(500).json({ success: false, message: 'Error responding to reschedule', error: error.message });
+    }
+});
+
 module.exports = router;
