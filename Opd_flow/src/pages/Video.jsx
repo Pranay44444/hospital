@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { Video as VideoIcon, VideoOff, Mic, MicOff, PhoneOff, ExternalLink, Users } from 'lucide-react';
 import authAPI, { appointmentAPI } from '../services/api';
 import './Video.css';
 
@@ -8,12 +9,19 @@ function Video() {
   const navigate = useNavigate();
   const location = useLocation();
   const jitsiContainerRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const jitsiApiRef = useRef(null);
+
+  const [phase, setPhase] = useState('lobby'); // lobby | loading | active | error
   const [error, setError] = useState('');
   const [user, setUser] = useState(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
 
-  // Get appointment details from navigation state if available, or fetch them
   const appointment = location.state?.appointment;
+
+  const roomName = appointment?.meetingLink
+    ? appointment.meetingLink.split('/').pop()
+    : `opd-flow-${requestId}`;
 
   useEffect(() => {
     const currentUser = authAPI.getCurrentUser();
@@ -24,121 +32,128 @@ function Video() {
     setUser(currentUser);
   }, [navigate]);
 
-  useEffect(() => {
-    if (!user || !requestId) return;
+  const startConference = () => {
+    if (!user) return;
+    setPhase('loading');
 
-    // Load Jitsi Meet
-    const loadJitsiScript = () => {
-      if (window.JitsiMeetExternalAPI) {
-        startConference();
+    const tryStart = () => {
+      if (!window.JitsiMeetExternalAPI) {
+        setError('Video SDK failed to load. Please refresh and try again.');
+        setPhase('error');
         return;
       }
 
-      // Script is already in index.html, just wait a bit if not loaded yet
-      const interval = setInterval(() => {
-        if (window.JitsiMeetExternalAPI) {
-          clearInterval(interval);
-          startConference();
-        }
-      }, 100);
-
-      // Timeout after 10 seconds
-      setTimeout(() => clearInterval(interval), 10000);
-    };
-
-    const startConference = () => {
       try {
-        setLoading(false);
-
-        // Extract room name from the meeting link or generate one
-        // Link format: https://meet.jit.si/opd-flow-<timestamp>-<randomString>
-        // We need just the room name part: opd-flow-<timestamp>-<randomString>
-        let roomName = `opd-flow-${requestId}`;
-
-        // If we have the full link, try to extract the room name
-        if (appointment?.meetingLink) {
-          const parts = appointment.meetingLink.split('/');
-          roomName = parts[parts.length - 1];
-        }
-
-        const domain = 'meet.jit.si';
-        const options = {
-          roomName: roomName,
+        const api = new window.JitsiMeetExternalAPI('meet.jit.si', {
+          roomName,
           width: '100%',
           height: '100%',
           parentNode: jitsiContainerRef.current,
           userInfo: {
             displayName: user.name || user.email,
-            email: user.email
+            email: user.email,
           },
           configOverwrite: {
             startWithAudioMuted: false,
             startWithVideoMuted: false,
-            prejoinPageEnabled: false
+            prejoinPageEnabled: false,
+            disableDeepLinking: true,
           },
           interfaceConfigOverwrite: {
             TOOLBAR_BUTTONS: [
-              'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-              'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-              'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-              'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-              'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-              'security'
+              'microphone', 'camera', 'desktop', 'fullscreen',
+              'fodeviceselection', 'hangup', 'chat', 'raisehand',
+              'videoquality', 'tileview', 'settings',
             ],
+            SHOW_JITSI_WATERMARK: false,
+            SHOW_WATERMARK_FOR_GUESTS: false,
           },
-        };
+        });
 
-        const api = new window.JitsiMeetExternalAPI(domain, options);
+        jitsiApiRef.current = api;
 
-        // Event listeners
-        // Note: We removed auto-navigation on videoConferenceLeft because it was causing issues
-        // when users tried to log in to Jitsi (which triggers a redirect/reload in the iframe).
-        // api.addEventListeners({
-        //   videoConferenceLeft: handleCallEnd,
-        //   readyToClose: handleCallEnd
-        // });
-
+        api.addEventListeners({
+          videoConferenceJoined: () => setPhase('active'),
+          audioMuteStatusChanged: ({ muted }) => setIsMuted(muted),
+          videoMuteStatusChanged: ({ muted }) => setIsVideoOff(muted),
+        });
       } catch (err) {
-        console.error('Failed to start conference:', err);
+        console.error('Jitsi init error:', err);
         setError('Failed to start video conference. Please try again.');
-        setLoading(false);
+        setPhase('error');
       }
     };
 
-    loadJitsiScript();
+    if (window.JitsiMeetExternalAPI) {
+      tryStart();
+      return;
+    }
 
-    return () => {
-      // Cleanup
-      const container = jitsiContainerRef.current;
-      if (container) {
-        container.innerHTML = '';
+    // Script already in index.html — poll until it's ready (max 10s)
+    let elapsed = 0;
+    const poll = setInterval(() => {
+      elapsed += 200;
+      if (window.JitsiMeetExternalAPI) {
+        clearInterval(poll);
+        tryStart();
+      } else if (elapsed >= 10000) {
+        clearInterval(poll);
+        setError('Video SDK timed out. Check your connection and refresh.');
+        setPhase('error');
       }
-    };
-  }, [user, requestId]);
+    }, 200);
+  };
 
-  const handleCallEnd = async () => {
-    // If we have appointment details, mark as completed
+  const handleEndCall = async () => {
+    if (jitsiApiRef.current) {
+      try { jitsiApiRef.current.executeCommand('hangup'); } catch (_) {}
+      jitsiApiRef.current.dispose();
+      jitsiApiRef.current = null;
+    }
+
     if (appointment?._id) {
       try {
-        // Only update status if it's not already completed/cancelled
         if (appointment.status !== 'completed' && appointment.status !== 'cancelled') {
           await appointmentAPI.updateAppointmentStatus(appointment._id, 'completed');
         }
-      } catch (err) {
-        console.error('Failed to update appointment status:', err);
-      }
+        navigate(`/consultation/${appointment._id}`, { state: { appointment } });
+        return;
+      } catch (_) {}
     }
 
-    // Navigate to consultation page
-    navigate(`/consultation/${appointment._id}`, { state: { appointment } });
+    navigate('/appointments');
   };
 
-  if (error) {
+  const toggleMute = () => {
+    jitsiApiRef.current?.executeCommand('toggleAudio');
+  };
+
+  const toggleVideo = () => {
+    jitsiApiRef.current?.executeCommand('toggleVideo');
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (jitsiApiRef.current) {
+        jitsiApiRef.current.dispose();
+        jitsiApiRef.current = null;
+      }
+    };
+  }, []);
+
+  if (!user) return null;
+
+  if (phase === 'error') {
     return (
       <div className="video-error-container">
-        <div className="error-message">{error}</div>
-        <button onClick={() => navigate(`/consultation/${appointment?._id}`)} className="btn-back">
-          Back to Consultation
+        <div className="video-error-icon"><VideoOff size={40} /></div>
+        <p className="error-message">{error}</p>
+        <button onClick={() => setPhase('lobby')} className="btn-back">
+          Try Again
+        </button>
+        <button onClick={() => navigate('/appointments')} className="btn-back btn-back--ghost">
+          Back to Appointments
         </button>
       </div>
     );
@@ -146,17 +161,111 @@ function Video() {
 
   return (
     <div className="video-page">
-      <div className="video-header">
-        <h2>Video Consultation</h2>
-        <button onClick={handleCallEnd} className="btn-end-call">
-          End Consultation
-        </button>
-      </div>
-      {loading && <div className="video-loading">Loading secure video room...</div>}
+      {/* Lobby screen */}
+      {phase === 'lobby' && (
+        <div className="video-lobby">
+          <div className="lobby-card">
+            <div className="lobby-icon">
+              <VideoIcon size={32} />
+            </div>
+            <h1 className="lobby-title">Video Consultation</h1>
+
+            {appointment && (
+              <div className="lobby-meta">
+                <div className="lobby-meta-row">
+                  <Users size={14} />
+                  <span>
+                    {appointment.doctorId?.userId?.name
+                      ? `Dr. ${appointment.doctorId.userId.name}`
+                      : appointment.patientName || 'Participant'}
+                  </span>
+                </div>
+                {appointment.date && (
+                  <div className="lobby-meta-row">
+                    <span className="lobby-meta-label">Date</span>
+                    <span>{new Date(appointment.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  </div>
+                )}
+                {appointment.time && (
+                  <div className="lobby-meta-row">
+                    <span className="lobby-meta-label">Time</span>
+                    <span>{appointment.time}</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="lobby-room">
+              <span className="lobby-room-label">Room</span>
+              <span className="lobby-room-name">{roomName}</span>
+              <a
+                href={`https://meet.jit.si/${roomName}`}
+                target="_blank"
+                rel="noreferrer"
+                className="lobby-room-external"
+                title="Open in browser tab"
+              >
+                <ExternalLink size={13} />
+              </a>
+            </div>
+
+            <div className="lobby-notice">
+              Your browser may ask for camera and microphone access — click <strong>Allow</strong> when prompted.
+            </div>
+
+            <button className="btn-join" onClick={startConference}>
+              <VideoIcon size={18} />
+              Join Now
+            </button>
+
+            <button className="btn-lobby-back" onClick={() => navigate('/appointments')}>
+              Back to Appointments
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Loading overlay (shown while Jitsi bootstraps) */}
+      {phase === 'loading' && (
+        <div className="video-loading-overlay">
+          <div className="loading-spinner" />
+          <p>Connecting to secure room…</p>
+        </div>
+      )}
+
+      {/* Jitsi embed — always mounted once past lobby so ref is ready */}
       <div
         ref={jitsiContainerRef}
-        className="jitsi-container"
+        className={`jitsi-container ${phase === 'active' || phase === 'loading' ? 'jitsi-visible' : ''}`}
       />
+
+      {/* Controls bar — only shown when call is active */}
+      {phase === 'active' && (
+        <div className="video-controls">
+          <button
+            className={`vc-btn ${isMuted ? 'vc-btn--danger' : ''}`}
+            onClick={toggleMute}
+            title={isMuted ? 'Unmute' : 'Mute'}
+          >
+            {isMuted ? <MicOff size={18} /> : <Mic size={18} />}
+            <span>{isMuted ? 'Unmute' : 'Mute'}</span>
+          </button>
+
+          <button
+            className={`vc-btn ${isVideoOff ? 'vc-btn--danger' : ''}`}
+            onClick={toggleVideo}
+            title={isVideoOff ? 'Start Camera' : 'Stop Camera'}
+          >
+            {isVideoOff ? <VideoOff size={18} /> : <VideoIcon size={18} />}
+            <span>{isVideoOff ? 'Start Cam' : 'Stop Cam'}</span>
+          </button>
+
+          <button className="vc-btn vc-btn--end" onClick={handleEndCall} title="End Call">
+            <PhoneOff size={18} />
+            <span>End Call</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
